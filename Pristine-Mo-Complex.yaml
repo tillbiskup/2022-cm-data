@@ -1,0 +1,128 @@
+format:
+  type: ASpecD recipe
+  version: '0.2'
+
+settings:
+  default_package: cwepr
+
+directories:
+  datasets_source: data
+  output: figs
+
+datasets:
+  - source: Sa755-01
+    id: Sa755-01
+    label: "[Mo(tdf-COCF$_3$)$_3$]$^-$Et$_4$N$^+$"
+  - source: Sa755-02
+    id: Sa755-02
+    label: "[Mo(tdf-COCF$_3$)$_3$]$^-$Et$_4$N$^+$"
+  - source: Sa757-01
+    id: Sa757-01
+    label: "[Mo(tdf-COCF$_3$)$_3$]$^{2-}$(Et$_4$N$^+$)$_2$"
+
+tasks:
+  - kind: processing
+    type: BaselineCorrection
+    properties:
+      parameters:
+        kind: polynomial
+        order: 0
+    comment: Always perform a zero-order baseline correction (DC offset).
+
+  - kind: processing
+    type: FrequencyCorrection
+    properties:
+      parameters:
+        frequency: 9.6
+    comment: Correct spectra to common microwave frequency for comparison.
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      parameters:
+        show_legend: True
+      filename:
+        Pristine-Mo-Complex.pdf
+    apply_to:
+      - Sa755-01
+      - Sa757-01
+    comment: First comparison of pristine Mo anion and dianion
+
+  - kind: singleplot
+    type: GoniometerSweepPlotter
+    properties:
+      properties:
+        axes:
+          xlim: [337, 345]
+      filename:
+        - Mo-monoanion-rotation-pattern.pdf
+    apply_to:
+      - Sa755-02
+    comment: The goniometer sweep has been recorded with much wider field and more accumulations
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 0
+        axis: 1
+        unit: axis
+    apply_to: Sa755-02
+    result: 0deg
+    comment: Extract slice at 0 degree position from goniometer sweep
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 90
+        axis: 1
+        unit: axis
+    apply_to: Sa755-02
+    result: 90deg
+    comment: Extract slice at 90 degree position from goniometer sweep
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      parameters:
+        show_legend: True
+      filename:
+        Mo-monoanion-compare-0deg-90deg.pdf
+    apply_to:
+      - 0deg
+      - 90deg
+    comment: Compare spectra recorded for 0 and 90 degree, not much of a difference
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [333, 350]
+          yticks: []
+          ylabel: "$EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename:
+        Pristine-Mo-Complex2.pdf
+    apply_to:
+      - 0deg
+      - Sa757-01
+    comment: Second try of comparing pristine Mo complex mono- and dianion, this time using the signal recorded at 0 degree (same as for the single scans).
+
+  - kind: export
+    type: TxtExporter
+    properties:
+      target:
+        - Sa755-02-0deg.txt
+        - Sa757-01.txt
+    apply_to:
+      - 0deg
+      - Sa757-01
+    comment: Export data to bare text format.

@@ -1,0 +1,211 @@
+format:
+  type: ASpecD recipe
+  version: '0.2'
+
+settings:
+  default_package: cwepr
+
+directories:
+  datasets_source: data
+  output: figs
+
+datasets:
+  - source: Sa755-02
+    id: Sa755-02
+    label: "[Mo(tdf-COCF$_3$)$_3$]$^-$Et$_4$N$^+$"
+  - source: Sa718-02
+    id: Sa718-02
+    label: "TQ1:Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa720-02
+    id: Sa720-02
+    label: "TQ1:Magic Blue"
+
+tasks:
+  - kind: processing
+    type: BaselineCorrection
+    properties:
+      parameters:
+        kind: polynomial
+        order: 0
+    comment: Always perform a zero-order baseline correction (DC offset).
+
+  - kind: processing
+    type: FrequencyCorrection
+    properties:
+      parameters:
+        frequency: 9.6
+    comment: Correct spectra to common microwave frequency for comparison.
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 0
+        axis: 1
+        unit: axis
+    apply_to: Sa755-02
+    result: Sa755-02-0deg
+    comment: Extract slice at 0 degree position from goniometer sweep
+
+  - kind: singleplot
+    type: GoniometerSweepPlotter
+    properties:
+      properties:
+        axes:
+          xlim: [340, 344]
+      filename:
+        - TQ1-Mo-Complex-rotation-pattern.pdf
+        - TQ1-Magic-Blue-rotation-pattern.pdf
+    apply_to:
+      - Sa718-02
+      - Sa720-02
+    comment: The goniometer sweep has been recorded with more accumulations
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 0
+        axis: 1
+        unit: axis
+    apply_to: Sa718-02
+    result: Sa718-02-0deg
+    comment: Extract slice at 0 degree position from goniometer sweep
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 90
+        axis: 1
+        unit: axis
+    apply_to: Sa718-02
+    result: Sa718-02-90deg
+    comment: Extract slice at 90 degree position from goniometer sweep
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      parameters:
+        show_legend: True
+      filename:
+        TQ1-Mo-Complex-compare-0deg-90deg.pdf
+    apply_to:
+      - Sa718-02-0deg
+      - Sa718-02-90deg
+    comment: Compare spectra recorded for 0 and 90 degree, not much of a difference
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 0
+        axis: 1
+        unit: axis
+    apply_to: Sa720-02
+    result: Sa720-02-0deg
+    comment: Extract slice at 0 degree position from goniometer sweep
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 90
+        axis: 1
+        unit: axis
+    apply_to: Sa720-02
+    result: Sa720-02-90deg
+    comment: Extract slice at 90 degree position from goniometer sweep
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      parameters:
+        show_legend: True
+      filename:
+        TQ1-Magic-Blue-compare-0deg-90deg.pdf
+    apply_to:
+      - Sa720-02-0deg
+      - Sa720-02-90deg
+    comment: Compare spectra recorded for 0 and 90 degree, not much of a difference
+    
+  - kind: processing
+    type: Normalisation
+    properties:
+      parameters:
+        kind: maximum
+        range: [338, 341.5]
+        range_unit: axis
+    apply_to:
+      - Sa718-02-0deg
+      - Sa755-02-0deg
+    result:
+      - Sa718-02-0deg-norm
+      - Sa755-02-0deg-norm
+    comment: Normalise to maximum on left feature (see field range)
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename:
+        TQ1-Mo-Complex-Pristine-Mo-Complex.pdf
+    apply_to:
+      - Sa755-02-0deg-norm
+      - Sa718-02-0deg-norm
+    comment: ...
+    
+  - kind: processing
+    type: Normalisation
+    properties:
+      parameters:
+        kind: amplitude
+    apply_to:
+      - Sa718-02-0deg
+      - Sa720-02-0deg
+    result:
+      - Sa718-02-0deg-norm2
+      - Sa720-02-0deg-norm
+    comment: Normalise
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename:
+        TQ1-Mo-Complex-Magic-Blue.pdf
+    apply_to:
+      - Sa720-02-0deg-norm
+      - Sa718-02-0deg-norm2
+    comment: ...
+
+  - kind: export
+    type: TxtExporter
+    properties:
+      target:
+        - Sa718-02-0deg.txt
+    apply_to:
+      - Sa718-02-0deg-norm
+    comment: Export data to bare text format.

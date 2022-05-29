@@ -1,0 +1,154 @@
+format:
+  type: ASpecD recipe
+  version: '0.2'
+
+settings:
+  default_package: cwepr
+
+directories:
+  datasets_source: data
+  output: figs
+
+datasets:
+  - source: Sa755-02
+    id: Sa755-02
+    label: "[Mo(tdf-COCF$_3$)$_3$]$^-$Et$_4$N$^+$"
+
+  - source: Sa769-03
+    id: Sa769-03
+    label: "PTEG neat"
+  - source: Sa770-02
+    id: Sa770-02
+    label: "PTEG:Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa772-02
+    id: Sa772-02
+    label: "PTEG:[Mo(tdf-COCF$_3$)$_3$]$^-$(Et$_4$N$^+$)"
+
+tasks:
+  - kind: processing
+    type: BaselineCorrection
+    properties:
+      parameters:
+        kind: polynomial
+        order: 0
+    comment: Always perform a zero-order baseline correction (DC offset).
+
+  - kind: processing
+    type: FrequencyCorrection
+    properties:
+      parameters:
+        frequency: 9.6
+    comment: Correct spectra to common microwave frequency for comparison.
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 0
+        axis: 1
+        unit: axis
+    apply_to: 
+      - Sa769-03
+      - Sa770-02
+      - Sa772-02
+      - Sa755-02
+    result: 
+      - Sa769-03-0deg
+      - Sa770-02-0deg
+      - Sa772-02-0deg
+      - Sa775-02-0deg
+    comment: Extract slice at 0 degree position from goniometer sweep
+
+  - kind: processing
+    type: Normalisation
+    properties:
+      parameters:
+        kind: amplitude
+    apply_to:
+      - Sa769-03-0deg
+      - Sa770-02-0deg
+      - Sa772-02-0deg
+      - Sa775-02-0deg
+    comment: Normalise to amplitude
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename:
+        PTEG-Mo-Complex3.pdf
+    apply_to:
+      - Sa769-03-0deg
+      - Sa770-02-0deg
+      - Sa772-02-0deg
+      - Sa775-02-0deg
+    comment: Compare PTEG with Mo complex, multiple scans from goniometer sweeps, add pristine Mo complex anion spectrum
+
+  - kind: processing
+    type: ScalarAlgebra
+    properties:
+      parameters:
+        kind: times
+        value: 0.35
+    apply_to:
+      - Sa775-02-0deg
+    result: 
+      - Sa775-02-0deg-scaled
+    comment: Make it fit to signal shoulder of doped polymer
+
+  - kind: multiprocessing
+    type: CommonRangeExtraction
+    apply_to:
+      - Sa770-02-0deg
+      - Sa775-02-0deg-scaled
+    result: 
+      - Sa770-02-0deg-common
+      - Sa775-02-0deg-common
+    comment: Extract common range of datasets for later subtraction
+
+  - kind: processing
+    type: DatasetAlgebra
+    properties:
+      parameters:
+        kind: minus
+        dataset: Sa775-02-0deg-common
+    apply_to:
+      - Sa770-02-0deg-common
+    result: 
+      - Sa770-02-0deg-difference
+    comment: Subtract pristine Mo anion signal
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename:
+        PTEG-Mo-Complex-scaled.pdf
+    apply_to:
+      - Sa770-02-0deg
+      - Sa775-02-0deg-scaled
+      - Sa770-02-0deg-difference
+      - Sa772-02-0deg
+    comment: Compare PTEG sequentially doped with neutral Mo complex with signal of pristine Mo complex anion spectrum

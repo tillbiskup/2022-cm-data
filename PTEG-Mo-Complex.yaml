@@ -1,0 +1,294 @@
+format:
+  type: ASpecD recipe
+  version: '0.2'
+
+settings:
+  default_package: cwepr
+
+directories:
+  datasets_source: data
+  output: figs
+
+datasets:
+  - source: Sa645-01
+    id: Sa645-01
+    label: "p(g$_4$2T-T) + 0% Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa646-02
+    id: Sa646-02
+    label: "p(g$_4$2T-T) + 1% Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa647-01
+    id: Sa647-01
+    label: "p(g$_4$2T-T) + 5% Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa648-01
+    id: Sa648-01
+    label: "p(g$_4$2T-T) + 10% Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa649-01
+    id: Sa649-01
+    label: "p(g$_4$2T-T) + 20% Mo(tdf-COCF$_3$)$_3$"
+
+  - source: Sa769-02
+    id: Sa769-02
+    label: "PTEG neat"
+  - source: Sa769-03
+    id: Sa769-03
+    label: "PTEG neat"
+  - source: Sa770-01
+    id: Sa770-01
+    label: "PTEG:Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa770-02
+    id: Sa770-02
+    label: "PTEG:Mo(tdf-COCF$_3$)$_3$"
+  - source: Sa772-01
+    id: Sa772-01
+    label: "PTEG:[Mo(tdf-COCF$_3$)$_3$]$^-$(Et$_4$N$^+$)"
+  - source: Sa772-02
+    id: Sa772-02
+    label: "PTEG:[Mo(tdf-COCF$_3$)$_3$]$^-$(Et$_4$N$^+$)"
+  - source: Sa774-01
+    id: Sa774-01
+    label: "PTEG:[Mo(tdf-COCF$_3$)$_3$]$^{2-}$(Et$_4$N$^+$)$_2$"
+  - source: Sa774-02
+    id: Sa774-02
+    label: "PTEG:[Mo(tdf-COCF$_3$)$_3$]$^{2-}$(Et$_4$N$^+$)$_2$"
+
+tasks:
+  - kind: processing
+    type: BaselineCorrection
+    properties:
+      parameters:
+        kind: polynomial
+        order: 0
+    comment: Always perform a zero-order baseline correction (DC offset).
+
+  - kind: processing
+    type: FrequencyCorrection
+    properties:
+      parameters:
+        frequency: 9.6
+    comment: Correct spectra to common microwave frequency for comparison.
+    
+  - kind: processing
+    type: Normalisation
+    properties:
+      parameters:
+        kind: amplitude
+    apply_to:
+      - Sa645-01
+      - Sa646-02
+      - Sa647-01
+      - Sa648-01
+      - Sa649-01
+    result:
+      - Sa645-01-norm
+      - Sa646-02-norm
+      - Sa647-01-norm
+      - Sa648-01-norm
+      - Sa649-01-norm
+    comment: Normalise to amplitude
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename: PTEG-Mo-Complex-concentrations.pdf
+    apply_to:
+      - Sa645-01-norm
+      # - Sa646-02-norm
+      - Sa647-01-norm
+      - Sa648-01-norm
+      - Sa649-01-norm
+    result: PTEG-Mo-Complex-concentrations
+    comment: Dependency of signal width on Mo complex concentration
+
+  - kind: processing
+    type: Filtering
+    properties:
+      parameters:
+        type: savgol
+        window_length: 500
+        order: 3
+    apply_to:
+      - Sa645-01-norm
+      - Sa646-02-norm
+      - Sa647-01-norm
+      - Sa648-01-norm
+      - Sa649-01-norm
+    result:
+      - Sa645-01-norm-savgol
+      - Sa646-02-norm-savgol
+      - Sa647-01-norm-savgol
+      - Sa648-01-norm-savgol
+      - Sa649-01-norm-savgol
+    comment: Smooth data using Savitzky-Golay filter
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename: PTEG-Mo-Complex-concentrations-savgol.pdf
+    apply_to:
+      - Sa645-01-norm-savgol
+      # - Sa646-02-norm-savgol
+      - Sa647-01-norm-savgol
+      - Sa648-01-norm-savgol
+      - Sa649-01-norm-savgol
+    result: PTEG-Mo-Complex-concentrations-savgol
+    comment: Dependency of signal width on Mo complex concentration, smoothed using Savitzky-Golay filter
+
+  - kind: compositeplot
+    type: CompositePlotter
+    properties:
+      plotter:
+        - PTEG-Mo-Complex-concentrations
+        - PTEG-Mo-Complex-concentrations-savgol
+      grid_dimensions: [2, 1]
+      subplot_locations:
+        - [0, 0, 1, 1]
+        - [1, 0, 1, 1]
+      filename:
+        PTEG-Mo-Complex-concentrations-comparison.pdf
+      properties:
+        figure:
+          size: [6, 8]
+    comment: Direct comparison of original and smoothed data
+   
+
+  - kind: processing
+    type: SliceExtraction
+    properties:
+      parameters:
+        position: 0
+        axis: 1
+        unit: axis
+    apply_to: 
+      - Sa769-03
+      - Sa770-02
+      - Sa772-02
+      - Sa774-02
+    result: 
+      - Sa769-03-0deg
+      - Sa770-02-0deg
+      - Sa772-02-0deg
+      - Sa774-02-0deg
+    comment: Extract slice at 0 degree position from goniometer sweep
+
+  - kind: processing
+    type: Normalisation
+    properties:
+      parameters:
+        kind: amplitude
+    apply_to:
+      - Sa769-02
+      - Sa770-01
+      - Sa772-01
+      - Sa774-01
+      - Sa769-03-0deg
+      - Sa770-02-0deg
+      - Sa772-02-0deg
+      - Sa774-02-0deg
+    comment: Normalise to amplitude
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename:
+        PTEG-Mo-Complex.pdf
+    apply_to:
+      - Sa769-02
+      - Sa770-01
+      - Sa772-01
+      # - Sa774-01
+    comment: Compare PTEG with Mo complex, single scans
+
+  - kind: multiplot
+    type: MultiPlotter1D
+    properties:
+      properties:
+        axes:
+          xlim: [337.5, 347.5]
+          yticks: []
+          ylabel: "$normalised\\ EPR\\ intensity$"
+        legend:
+          loc: "upper right"
+          frameon: False
+          labelspacing: 0.5
+          fontsize: 8.0
+      parameters:
+        show_legend: True
+      filename:
+        PTEG-Mo-Complex2.pdf
+    apply_to:
+      - Sa769-03-0deg
+      - Sa770-02-0deg
+      - Sa772-02-0deg
+      # - Sa774-02-0deg
+    comment: Compare PTEG with Mo complex, multiple scans from goniometer sweeps
+
+  - kind: export
+    type: TxtExporter
+    properties:
+      target:
+        - Sa645-01-norm.txt
+        - Sa646-02-norm.txt
+        - Sa647-01-norm.txt
+        - Sa648-01-norm.txt
+        - Sa649-01-norm.txt
+        - Sa645-01-norm-savgol.txt
+        - Sa646-02-norm-savgol.txt
+        - Sa647-01-norm-savgol.txt
+        - Sa648-01-norm-savgol.txt
+        - Sa649-01-norm-savgol.txt
+        - Sa769-03-0deg-norm.txt
+        - Sa770-02-0deg-norm.txt
+        - Sa772-02-0deg-norm.txt
+        - Sa774-02-0deg-norm.txt
+    apply_to:
+      - Sa645-01-norm
+      - Sa646-02-norm
+      - Sa647-01-norm
+      - Sa648-01-norm
+      - Sa649-01-norm
+      - Sa645-01-norm-savgol
+      - Sa646-02-norm-savgol
+      - Sa647-01-norm-savgol
+      - Sa648-01-norm-savgol
+      - Sa649-01-norm-savgol
+      - Sa769-03-0deg
+      - Sa770-02-0deg
+      - Sa772-02-0deg
+      - Sa774-02-0deg
+    comment: Export data to bare text format.

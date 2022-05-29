@@ -1,0 +1,73 @@
+cwEPR Info file - v. 0.1.3 (2016-01-18)
+
+GENERAL
+Filename:               Sa645-01
+Date start:             2019-11-27
+Date end:               2019-11-27
+Time start:             11:13:00
+Time end:               11:18:00
+Operator:               Emmy Järsvall, Till Biskup
+Label:                  Sa645 #01
+Purpose:                Signal
+
+SAMPLE
+Name:                   pristine PTEG
+ID:                     645
+Description:            N/A
+Solvent:                Film
+Preparation:            spin-coated on PET
+Tube:                   3.8 x 3 x 250 mm
+
+EXPERIMENT
+Type:                   field-sweep
+Runs:                   1
+Variable parameter:     field
+Increment:              N/A
+
+SPECTROMETER
+Model:                  Magnettech MS-5000 [11-0096]
+Software:               Magnettech ESRStudio 1.54.1
+
+MAGNETIC FIELD
+Field probe type:       Hall 
+Field probe model:      xxx 
+Start:                  335 mT
+Stop:                   341 mT
+Step:                   N/A
+Sequence:               up
+Controller:             Magnettech built-in
+Power supply:           Magnettech built-in
+
+BRIDGE
+Model:                  Magnettech built-in
+Controller:             Magnettech built-in
+Attenuation:            30 dB
+Power:                  100 uW
+Detection:              mixer
+Frequency counter:      Magnettech built-in
+MW frequency:           9.467950 GHz
+Q value:                1321
+
+SIGNAL CHANNEL
+Model:                  Magnettech built-in
+Modulation amplifier:   Magnettech built-in
+Accumulations:          4
+Modulation frequency:   100 kHz
+Modulation amplitude:   0.2 mT
+Receiver gain:          N/A
+Conversion time:        N/A
+Time constant:          N/A
+Phase:                  0 deg
+
+PROBEHEAD
+Type:                   rectangular TE102
+Model:                  Magnettech built-in
+Coupling:               critical
+
+TEMPERATURE
+Temperature:            295 K
+Controller:             N/A
+Cryostat:               N/A
+Cryogen:                N/A
+
+COMMENT

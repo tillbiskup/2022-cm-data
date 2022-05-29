@@ -1,0 +1,79 @@
+cwEPR Info file - v. 0.1.4 (2020-01-21)
+
+GENERAL
+Filename:               Sa772-01
+Date start:             2021-06-11
+Date end:               2021-06-11
+Time start:             09:11:00
+Time end:               09:12:00
+Operator:               Till Biskup
+Label:                  Sa772 #01
+Purpose:                Ueberblick
+
+SAMPLE
+Name:                   PTEG:Mo3-monoanion
+ID:                     772
+Description:            doped Film, drop-cast
+Solvent:                
+Preparation:            Emmy
+Tube:                   5 x 4 x 250 mm
+
+EXPERIMENT
+Type:                   FieldSweep
+Runs:                   1
+Variable parameter:     BField
+Increment:              N/A
+
+SPECTROMETER
+Model:                  MS-5000 [11-0096]
+Software:               ESRStudio 1.74.2
+
+MAGNETIC FIELD
+Field probe type:       Hall
+Field probe model:      builtin
+Start:                  328.00 mT
+Stop:                   348.00 mT
+Step:                   0.00864677907479464 mT
+Sequence:               up
+Controller:             builtin
+Power supply:           builtin
+
+BRIDGE
+Model:                  builtin
+Controller:             builtin
+Attenuation:            25 dB
+Power:                  0.3162 mW
+Detection:              mixer
+Frequency counter:      builtin
+MW frequency:           9.600000 GHz
+Q value:                2399
+
+SIGNAL CHANNEL
+Model:                  builtin
+Modulation amplifier:   builtin
+Accumulations:          1
+Modulation frequency:   100 kHz
+Modulation amplitude:   0.10 mT
+Receiver gain:          0 
+Offset:                 0.0
+Conversion time:        0.00 
+Time constant:          0.00 
+Phase:                  0.00 deg
+
+DIGITAL FILTER
+Mode:                   Manual
+Number of Points:       0
+
+PROBEHEAD
+Type:                   rectangular TE102
+Model:                  builtin
+Coupling:               critical
+
+TEMPERATURE
+Temperature:            307.02724304199216 K
+Controller:             N/A
+Cryostat:               N/A
+Cryogen:                N/A
+
+COMMENT
+Substrat initial parallel zum Feld
