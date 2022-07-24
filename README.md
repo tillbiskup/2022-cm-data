@@ -1,8 +1,8 @@
-# EPR data and analysis for Järsvall *et al.*, Chem. Mater. 2022
+# EPR data and analysis for Järsvall *et al.*, Chem. Mater. 34:5673, 2022
 
-This directory contains both, raw data and analysis "recipes" used to analyse the EPR data for the following manuscript:
+This directory contains both, raw data and analysis "recipes" used to analyse the EPR data for the following publication:
 
- * Emmy Järsvall, Till Biskup, Yadong Zhang, Renee Kroon, Stephen Barlow, Seth Marder, Christian Müller: Double doping of a low-ionization energy polythiophene with a molybdenum dithiolene complex. *Chemistry of Materials*, 2022
+ * Emmy Järsvall, Till Biskup, Yadong Zhang, Renee Kroon, Stephen Barlow, Seth Marder, Christian Müller: Double doping of a low-ionization energy polythiophene with a molybdenum dithiolene complex. *Chemistry of Materials*, 34:5673-5679, 2022, [doi:10.1021/acs.chemmater.2c01040](https://doi.org/10.1021/acs.chemmater.2c01040)
 
 
 ## Organisation
